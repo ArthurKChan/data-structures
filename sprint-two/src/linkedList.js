@@ -8,12 +8,22 @@ var makeLinkedList = function(){
       var tempNode = makeNode(value);
       this.head = tempNode;
       this.tail = tempNode;
+      //this.tail.next = this.head;
     }else{
       var oldTail = this.tail;
       this.tail = makeNode(value);
+      //this.tail.next = this.head;
       oldTail.next = this.tail;
     }
   };
+  //list.addToHead = function(value){
+  //;
+  //}
+
+
+  //list.removeTail = function(){
+  //removeH
+  //}
 
   list.removeHead = function(){
     var tempNode = this.head;
@@ -43,7 +53,8 @@ var makeLinkedList = function(){
 
 var makeNode = function(value){
   var node = {};
-
+  //EXTRA CREDIT:
+  //node.prev = null;
   node.value = value;
   node.next = null;
 
