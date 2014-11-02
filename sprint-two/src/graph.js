@@ -1,87 +1,69 @@
+/* We must assume that we can't add
+* this.allNodes = {};
+* node = {newNodeValue:newNodeValue ,neightbors:{neighborNodeValue: referenceToNode, ....}}
+* look up the property and compare neighbors
+* After all basics, implement tree traversal
+* treetraversal(nodeValue1, nodeValue2)
+input: nodes you want to find a path to and from
+output: array of shortest path from n1 to n2
+*/
+
 var Graph = function(){
   this.newestNode = null;
-
-  this.allNodes = [];
-
+  // allNodes : { value : {value:value, neighbors:{}}, ...  }
+  this.allNodes = {};
 };
 
-Graph.prototype.addNode = function(newNode, toNode){
+Graph.prototype.addNode = function(newNodeValue, toNodeValue){
+  // First node added to graph
   if(this.newestNode === null){
-    this.newestNode = makeNode(newNode);
+    this.newestNode = makeNode(newNodeValue);
 
-    //NAIVE
-    this.allNodes.push(this.newestNode);
-
-  }
-  else if(this.allNodes.length === 1){
-    var temp = this.newestNode;
-    this.newestNode = makeNode(newNode, temp);
-
-    temp[1].push(this.newestNode);
-
-    //NAIVE
-    this.allNodes.push(this.newestNode);
+  }// Satisfy spec constraint (expects auto pairing first two nodes)
+  else if(Object.keys(this.allNodes).length === 1){
+    var prevNode = this.newestNode;
+    this.newestNode = makeNode(newNodeValue, toNodeValue);
+    prevNode.neighbors[newNodeValue] = this.newestNode;
 
   }else{
-    for(var node = 0; node < this.allNodes.length; node++){
-      // this.allNodes[i][0] is the value of the ith node in allNodes
-      if(this.allNodes[node][0] === toNode){
-
-        this.newestNode = makeNode(newNode, this.allNodes[node]);
-
-        this.allNodes[node][1].push(this.newestNode);
-
-        //NAIVE
-        this.allNodes.push(this.newestNode);
-      }
-    }
+    var neighborNode = this.allNodes[toNodeValue];
+    this.newestNode = makeNode(newNodeValue, toNodeValue);
+    neighborNode.neighbors[newNodeValue] = this.newestNode;
   }
+  // Add the new node to the allNodes object
+  this.allNodes[newNodeValue] = this.newestNode;
+  console.log(this.allNodes);
 };
 
 
-Graph.prototype.contains = function(node){
-  for(var i = 0; i < this.allNodes.length; i++){
-    if(this.allNodes[i][0] === node ){
-      return true;
-    }
+Graph.prototype.contains = function(nodeValue){
+  return this.allNodes.hasOwnProperty(nodeValue);
+};
+
+Graph.prototype.removeNode = function(nodeValue){
+  // find that node. go to all its neighbors and tell them to remove itself from neighbor list
+  var nodeToRm = this.allNodes[nodeValue];
+  for(var neighbor in nodeToRm.neighbors){
+    //delete neighbor[nodeValue];
+    var theNeighbor = nodeToRm.neighbors[neighbor];
+    delete theNeighbor[nodeValue];
+  }
+  delete this.allNodes[nodeValue];
+};
+
+Graph.prototype.getEdge = function(fromNodeValue, toNodeValue){
+  var fromNode = this.allNodes[fromNodeValue];
+  var toNode = this.allNodes[toNodeValue];
+  if(fromNode.neighbors[toNodeValue]!== undefined){
+    return true;
   }return false;
 };
 
-Graph.prototype.removeNode = function(node){
-  /*found target node
-  for neighbors of target node
-    splice out neighbors connection to target node
-  splice target node out of allNodes*/
-  for(var i = 0; i < this.allNodes.length; i++){
-    if(this.allNodes[i][0] === node ){
-      var targetNodeNeighbors = this.allNodes[i][1];
-      for(var j = 0; j < targetNodeNeighbors.length; j++){
-        for(var k = 0; k < targetNodeNeighbors[j][1].length; k++){
-          if(targetNodeNeighbors[j][1][k][0] === node){
-            targetNodeNeighbors[j][1].splice(k, 1);
-          }
-        }
-      }
-    this.allNodes.splice(i, 1);
-    }
-  }
-};
-
-Graph.prototype.getEdge = function(fromNode, toNode){
-  for(var i = 0; i < this.allNodes.length; i++){
-    if(this.allNodes[i][0] === fromNode){
-      for(var j = 0; j < this.allNodes[i][1].length; j++){
-        if(this.allNodes[i][1][j][0] === toNode){
-          return true;
-        }
-      }
-    }
-  }
-  return false;
-};
-
-Graph.prototype.addEdge = function(fromNode, toNode){
-
+Graph.prototype.addEdge = function(fromNodeValue, toNodeValue){
+  var fromNode = this.allNodes[fromNodeValue];
+  var toNode = this.allNodes[toNodeValue];
+  fromNode.neighbors[toNodeValue] = toNode;
+  toNode.neighbors[fromNodeValue] = fromNode;
 };
 
 Graph.prototype.removeEdge = function(fromNode, toNode){
@@ -111,14 +93,20 @@ Graph.prototype.removeEdge = function(fromNode, toNode){
   }
 };
 
-// input: value of new node
-// output: Node tuple of value and an array of edges
-var makeNode = function(value, NODE){
-  var node = []
-  node[0] = value;
-  node[1] = [];
-  if(NODE !== undefined){
-    node[1] = [NODE];
+// input: value of new node (optional: reference to node)
+// output: Node Object
+var makeNode = function(value, toNodeValue){
+  var node = {};
+
+  node[value] = value; //node.value
+  node.neighbors = {};
+
+  if(toNodeValue !== undefined){
+    console.log('here');
+    console.log(toNodeValue);
+    console.log(this.allNodes[toNodeValue]);
+    var toNode = this.allNodes[toNodeValue];
+    node.neighbors[toNodeValue] = toNode;
   }
 
   return node;
