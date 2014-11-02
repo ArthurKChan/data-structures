@@ -33,13 +33,11 @@ describe('graph', function() {
   });
 
   it('should create edges between two nodes', function() {
-    console.log('puppiesHERE');
     graph.addNode('puppies');
     graph.addNode('kittens');
     graph.addNode('penguins', 'puppies');
     expect(graph.getEdge('penguins', 'puppies')).to.equal(true);
     expect(graph.getEdge('penguins', 'kittens')).to.equal(false);
-    console.log('ENDpuppiesHEre');
   });
 
   it('should remove edges between nodes', function() {

@@ -1,64 +1,72 @@
-/* We must assume that we can't add
-* this.allNodes = {};
-* node = {newNodeValue:newNodeValue ,neightbors:{neighborNodeValue: referenceToNode, ....}}
-* look up the property and compare neighbors
-* After all basics, implement tree traversal
-* treetraversal(nodeValue1, nodeValue2)
-input: nodes you want to find a path to and from
-output: array of shortest path from n1 to n2
-*/
+/*******************************************
+Graph pseudoclassical constructor (var graph = new Graph())
+  Methods: addNode, contains, removeNode, getEdge, addEdge, removeEdge
+********************************************/
 
 var Graph = function(){
   this.newestNode = null;
-  // allNodes : { value : {value:value, neighbors:{}}, ...  }
   this.allNodes = {};
 };
 
+// input: the value of the node to add (optional: the value of a neighbor node)
+// output: no return
+//        adds a node of input value to the graph
+//        defaults to the last node added as a neighbor if no toNodeValue is given
 Graph.prototype.addNode = function(newNodeValue, toNodeValue){
   // First node added to graph
   if(this.newestNode === null){
     this.newestNode = makeNode(newNodeValue);
-
   }// Satisfy spec constraint (expects auto pairing first two nodes)
-  else if(Object.keys(this.allNodes).length === 1){
+  else if(Object.keys(this.allNodes).length === 1 || toNodeValue === undefined){
     var prevNode = this.newestNode;
-    this.newestNode = makeNode(newNodeValue, toNodeValue);
-    prevNode.neighbors[newNodeValue] = this.newestNode;
-
-  }else{
+    this.newestNode = makeNode(newNodeValue, prevNode);
+    prevNode.neighbors[this.newestNode.value] = this.newestNode;
+  }else{// If toNodeValue is given, create the new node with a toNode neighbor
     var neighborNode = this.allNodes[toNodeValue];
-    this.newestNode = makeNode(newNodeValue, toNodeValue);
+    this.newestNode = makeNode(newNodeValue, neighborNode);
     neighborNode.neighbors[newNodeValue] = this.newestNode;
   }
   // Add the new node to the allNodes object
   this.allNodes[newNodeValue] = this.newestNode;
-  console.log(this.allNodes);
 };
 
-
+// input: the value of the node that might be contained in the graph
+// output: return true if node is in graph
+//         return false if node is not in the graph
 Graph.prototype.contains = function(nodeValue){
   return this.allNodes.hasOwnProperty(nodeValue);
 };
 
+
+// input: the value of the node to delete
+// output:no return value 
+//        removes all references to node with given value
 Graph.prototype.removeNode = function(nodeValue){
   // find that node. go to all its neighbors and tell them to remove itself from neighbor list
   var nodeToRm = this.allNodes[nodeValue];
   for(var neighbor in nodeToRm.neighbors){
-    //delete neighbor[nodeValue];
     var theNeighbor = nodeToRm.neighbors[neighbor];
     delete theNeighbor[nodeValue];
   }
   delete this.allNodes[nodeValue];
 };
 
+
+// input: the value of two nodes
+// output: return true if they are neighbors
+//        return false if they are not neighbors
 Graph.prototype.getEdge = function(fromNodeValue, toNodeValue){
   var fromNode = this.allNodes[fromNodeValue];
-  var toNode = this.allNodes[toNodeValue];
+  
   if(fromNode.neighbors[toNodeValue]!== undefined){
     return true;
   }return false;
 };
 
+// input: the value of two nodes
+// output: no return value.
+//        adds references to each other in the
+//        nodes' neighbor property
 Graph.prototype.addEdge = function(fromNodeValue, toNodeValue){
   var fromNode = this.allNodes[fromNodeValue];
   var toNode = this.allNodes[toNodeValue];
@@ -66,50 +74,35 @@ Graph.prototype.addEdge = function(fromNodeValue, toNodeValue){
   toNode.neighbors[fromNodeValue] = fromNode;
 };
 
-Graph.prototype.removeEdge = function(fromNode, toNode){
-  var FromNode;
-  var ToNode;
-  for(var i = 0; i < this.allNodes.length; i++){
-    if(this.allNodes[i][0] === fromNode){
-      FromNode = this.allNodes[i];
-      for(var j = 0; j < this.allNodes[i][1].length; j++){
-        if(this.allNodes[i][1][j][0] === toNode){
-          this.allNodes[i][1].splice(j,1);
-        }
-      }if(FromNode[1].length === 0){
-        this.allNodes.splice(i,1);
-      }
-    }
-    if(this.allNodes[i][0] === toNode){
-      ToNode = this.allNodes[i];
-      for(var j = 0; j < this.allNodes[i][1].length; j++){
-        if(this.allNodes[i][1][j][0] === fromNode){
-          this.allNodes[i][1].splice(j,1);
-        }
-      }if(ToNode[1].length === 0){
-        this.allNodes.splice(i,1);
-      }
-    }
-  }
+// input: the value of the two nodes
+// output: no return value.
+//        removes the edge between the two nodes
+//        if any of the manipulated nodes no longer have any
+//        neighbors, remove the node.
+Graph.prototype.removeEdge = function(fromNodeValue, toNodeValue){
+  var fromNode = this.allNodes[fromNodeValue];
+  var toNode = this.allNodes[toNodeValue];
+  // Remove node reference to each other in their respective 'neighbors' property
+  delete fromNode.neighbors[toNodeValue];
+  delete toNode.neighbors[fromNodeValue];
+  // Clean up: if a fromNode or toNode have no more edges, remove the node from graph
+  Object.keys(fromNode.neighbors).length === 0 ? (delete this.allNodes[fromNodeValue]) : null;
+  Object.keys(toNode.neighbors).length === 0 ? (delete this.allNodes[toNodeValue]) : null;
 };
 
-// input: value of new node (optional: reference to node)
-// output: Node Object
-var makeNode = function(value, toNodeValue){
+// input: value of new node (optional: reference to neighbor node)
+// output: Node Object {
+//          'value' : data,
+//          'neighbors' : {} of references to neighbors
+var makeNode = function(nodeValue, toNode){
   var node = {};
-
-  node[value] = value; //node.value
+  node.value = nodeValue; 
   node.neighbors = {};
 
-  if(toNodeValue !== undefined){
-    console.log('here');
-    console.log(toNodeValue);
-    console.log(this.allNodes[toNodeValue]);
-    var toNode = this.allNodes[toNodeValue];
+  if(toNode){
+    var toNodeValue = toNode.value;
     node.neighbors[toNodeValue] = toNode;
-  }
-
-  return node;
+  }return node;
 };
 
 /*
