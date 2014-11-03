@@ -46,7 +46,7 @@ describe('doubleLinkedList', function() {
     expect(doubleLinkedList.tail.value).to.equal(1);
   });
 
-  xit('removeHead and removeTail should remove and return head/tail respectively (assumes insert works)', function(){
+  it('removeHead and removeTail should remove and return head/tail respectively (assumes insert works)', function(){
     //Arrange head[3]-[0]-[1]-[2]-[4]tail
     doubleLinkedList.addToHead(0);
     doubleLinkedList.addToTail(1);
@@ -64,18 +64,18 @@ describe('doubleLinkedList', function() {
 
     expect(doubleLinkedList.removeHead()).to.equal(1);
 
-    expect(doubleLinkedList.head.value).to.equal(null);
-    expect(doubleLinkedList.tail.value).to.equal(null);
+    expect(doubleLinkedList.head).to.equal(null);
+    expect(doubleLinkedList.tail).to.equal(null);
   });
 
-  xit('should be able to insert and remove sequentially', function(){
+  it('should be able to insert and remove sequentially', function(){
     doubleLinkedList.addToTail(0);
     expect(doubleLinkedList.removeHead()).to.equal(0);
     doubleLinkedList.addToHead(0);
     expect(doubleLinkedList.removeTail()).to.equal(0);
 
-    expect(doubleLinkedList.head.value).to.equal(null);
-    expect(doubleLinkedList.tail.value).to.equal(null);
+    expect(doubleLinkedList.head).to.equal(null);
+    expect(doubleLinkedList.tail).to.equal(null);
   });
 
 });

@@ -42,8 +42,17 @@ var makeDoubleLinkedList = function(){
   };
 
   list.removeTail = function(value){
+    var tempNode = this.tail;
 
-  }
+    if(this.tail === null){
+      return;
+    }else if(this.head === this.tail){
+      this.head = null;
+      this.tail = null;
+    }else {
+      this.tail = this.tail.prev;
+    }return tempNode.value;
+  };
 
   list.contains = function(target){
     var temp = this.head;
