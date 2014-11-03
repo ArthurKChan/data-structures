@@ -57,4 +57,67 @@ describe('graph', function() {
     expect(graph.contains('jacket')).to.equal(false);
   });
 
+  xit('getShortestPath should return an array of arrays.', function(){
+    //Arrange
+    graph.addNode('a');
+    graph.addNode('b');
+    //Act
+    var paths = graph.getShortestPath('a','b');
+    //Assert
+    expect(paths).to.deep.equal([['a','b']]);
+  });
+
+  xit('should find a path from one node to another node.', function(){
+    //Arrange
+    graph.addNode('a');
+    graph.addNode('b');
+    graph.addNode('c', 'b');
+    graph.addNode('d', 'c');
+    //Act
+    var paths = graph.getShortestPath('a','d');
+    //Assert
+    expect(paths).to.deep.equal(['a','b','c','d']);
+  });
+
+  xit('should find the shortest path from one node to another node.', function(){
+    //Arrange
+    graph.addNode('a');
+    graph.addNode('b');
+    graph.addNode('c','b');
+    graph.addNode('d','c');
+    graph.addNode('e','d');
+    graph.addNode('f','e');
+    graph.addNode('g','c');
+    graph.addNode('h','d');
+    graph.addEdge('a','d');
+    graph.addEdge('b','d');
+    //Act
+    var paths = graph.getShortestPath('a','f');
+    //Assert
+    expect(paths).to.deep.equal(['a','d','e','f']);
+  });
+
+  xit('should find all shortest paths.', function(){
+    //Arrange
+    graph.addNode('a');
+    graph.addNode('b');
+    graph.addNode('c','b');
+    graph.addNode('d','c');
+    graph.addNode('e','d');
+    graph.addNode('f','e');
+    graph.addNode('g','c');
+    graph.addNode('h','d');
+    graph.addEdge('a','d');
+    graph.addEdge('b','d');
+
+    graph.addNode('i','a');
+    graph.addEdge('i','e');
+    //Act
+    var paths = graph.getShortestPath('a','f');
+    //Assert
+    expect(paths.length).to.equal(2);
+    expect(paths).to.be.an('array');
+    expect(paths).to.have.deep.members( [['a','d','e','f'],['a','i','e','f']] );
+  });
+
 });

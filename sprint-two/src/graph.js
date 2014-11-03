@@ -90,6 +90,16 @@ Graph.prototype.removeEdge = function(fromNodeValue, toNodeValue){
   Object.keys(toNode.neighbors).length === 0 ? (delete this.allNodes[toNodeValue]) : null;
 };
 
+// input: the value of two nodes in the graph
+// output: returns an array of arrays of shortest paths 
+//         containing the connected node values
+//         that map the shortest path between 
+//         the two given nodes (inclusive)
+//        *DO NOT return an array of references to nodes*    
+Graph.prototype.getShortestPath = function(fromNodeValue, toNodeValue){
+
+};
+
 // input: value of new node (optional: reference to neighbor node)
 // output: Node Object {
 //          'value' : data,
