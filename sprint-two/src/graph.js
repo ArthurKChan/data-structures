@@ -100,6 +100,10 @@ Graph.prototype.getShortestPath = function(fromNodeValue, toNodeValue){
 
 };
 
+Graph.prototype.traversal = function(nodeReference, callback){
+
+};
+
 // input: value of new node (optional: reference to neighbor node)
 // output: Node Object {
 //          'value' : data,

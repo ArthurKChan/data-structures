@@ -57,6 +57,22 @@ describe('graph', function() {
     expect(graph.contains('jacket')).to.equal(false);
   });
 
+  xit('should traverse the graph applying a callback to every node', function(){
+    //Arrange
+    graph.addNode('a');
+    graph.addNode('b');
+    graph.addNode('c','b');
+    graph.addEdge('c','a');
+    var list = [];
+    var aNode = graph.newestNode;
+    //Act
+    graph.traversal(aNode,function(aNode){
+      list.push(aNode.value);
+    });
+    //Assert
+    expect(list).to.have.deep.members(['a','b','c'])
+  });
+
   xit('getShortestPath should return an array of arrays.', function(){
     //Arrange
     graph.addNode('a');
